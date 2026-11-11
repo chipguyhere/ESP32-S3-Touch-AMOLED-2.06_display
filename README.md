@@ -41,7 +41,9 @@ no Arduino Library Manager entry. To install:
    - macOS / Linux: `~/Documents/Arduino/libraries/`
    - Windows: `Documents\Arduino\libraries\`
 3. Do the same for **chipguy_ESP32-S3-Touch-AMOLED-2.06_board** (and the power
-   library, if you want the battery).
+   library, if you want the battery). The two watch examples, GlanceWatch and
+   GlanceWithDemos, also need the power and rtc libraries and
+   chipguy_RealTimeClockSupport.
 4. Restart Arduino IDE so the examples appear in the File menu.
 
 (Alternatively, in the IDE: **Sketch ▸ Include Library ▸ Add .ZIP Library…**
@@ -152,6 +154,77 @@ Two more complete apps, laid out entirely from the live screen size, so the same
 **BouncingBalls** is a physics toy with two sliders; **Calculator** is a working
 four-function calculator in portrait. The calculator's near-black design suits an
 AMOLED: black pixels are simply off.
+
+### GlanceWatch — a working wristwatch
+
+An ordinary wristwatch, built from all four libraries:
+
+- **Raise to look.** Tilt the watch up toward your face and the time, date and
+  battery appear for 8 seconds (a tap on the screen keeps them on longer). The
+  position is fixed: the face about 45° up from flat, which suits looking at it
+  standing up or lying down, so there's nothing to set up. It is armed with "leave
+  the position first", so a watch lying face-up on a table doesn't keep waking up.
+- **Sets itself once a day.** A silent wake every 24 hours, with the screen off,
+  connects to Wi-Fi and asks three internet time servers (NTP) at once. The time is
+  used only when at least two of them agree to within a second; if they don't, or
+  Wi-Fi fails, it tries again an hour later. Each result goes to
+  `rtcSupport.setUTC()`, which learns how fast or slow the clock chip runs. If the
+  time hasn't been set this way for 72 hours, the face says so and suggests checking
+  the Wi-Fi.
+- **Local time** for US Mountain time with daylight saving by default, or the zone
+  chosen on the watch.
+- **Battery** as the power chip's percentage estimate, and "charging" or "USB" when
+  plugged in.
+- **Buttons.** BOOT or PWR also show the time. Hold BOOT for 2 seconds for a menu on
+  the touch screen. "Hold for menu" appears beside BOOT while it is down. Either
+  button closes the menu, and so does 20 seconds without a touch.
+- **Set the time** (on the menu) opens three more:
+  - **Wi-Fi network** explains that the clock is set over Wi-Fi and lets you type
+    the network's name and password on the watch. They're saved, and used from then
+    on instead of the ones in `watch_config.h`; "Set the time now" then syncs
+    straight away. The sync runs in the background, so the face and buttons keep
+    working while it does; the watch stays awake until it finishes.
+  - **Time zone** picks a US zone, or a custom fixed offset from UTC in hours and
+    half hours, with no daylight saving. The custom screen spells out how far ahead
+    of or behind UTC it is, and shows the date and time it gives.
+  - **Advanced** turns on the battery voltage and the measured clock drift on the
+    face; both are off at first. The drift reads "learning" until it has been
+    measured.
+
+  A fresh start (power on, reset, a new upload) always sets the time too. While PWR
+  is held, a small box beside it counts down "Hold 6s to power off" (the hold time
+  is read from the power chip).
+- **Your own app.** This is the plain watch on purpose: it's the starting point for
+  "a watch plus my own app". Add a menu button and a screen of your own;
+  GlanceWithDemos shows how.
+- **Settings** — your time zone and 12/24-hour, and optionally your Wi-Fi name and
+  password (or type those on the watch) — go in `watch_config.h` next to the sketch.
+  The copy in the library holds placeholders; keep your real password out of
+  anything you share or publish.
+- **Needs more libraries** than the other examples: the board,
+  [power](https://github.com/chipguyhere/ESP32-S3-Touch-AMOLED-2.06_power) and
+  [rtc](https://github.com/chipguyhere/ESP32-S3-Touch-AMOLED-2.06_rtc) libraries,
+  [chipguy_RealTimeClockSupport](https://github.com/chipguyhere/RealTimeClockSupport),
+  and LVGL 9.
+- Tried on the bench (2026-10-06): NTP set the clock, the local time was right, and
+  the battery read 62 % / 4.07 V while charging.
+
+### GlanceWithDemos — the watch, with apps added
+
+The same watch, with three demos added to the BOOT menu under "Set the time". It
+shows how an app slots into the watch: each one is a screen of its own, PWR goes
+back to the time, and each closes by itself when nobody is using it, so nothing left
+open drains the battery. It needs the same libraries as GlanceWatch.
+
+- **Calculator** and **Bouncing balls** — LvglCalculator and LvglBouncingBalls
+  above, copied in. They close after a minute without a touch.
+- **Simple Shooter** — a little space game with sound. It plays itself until you
+  touch the lower part of the screen; then the ship follows your finger and fires.
+  BOOT changes the sound (on, shots quiet, off). It closes after two minutes of
+  playing itself. It was translated to C++ from a MicroPython game (the original is
+  in the example's `extras/` folder), and its pictures and sounds are built into the
+  program, so no SD card is needed. This is the first thing to use the watch's
+  speaker.
 
 ---
 
@@ -333,8 +406,8 @@ libraries, in plain language first with detail behind links:
   [the motion sensor](https://github.com/chipguyhere/ESP32-S3-Touch-AMOLED-2.06_board/blob/main/README-board.md#motion-sensor-imu))
   or only when you raise it to look at it
   ([raise to look](https://github.com/chipguyhere/ESP32-S3-Touch-AMOLED-2.06_board/blob/main/README-orientation.md)).
-  The RTC library's **GlanceWatch** example puts it all together as a working watch
-  face.
+  This library's [**GlanceWatch**](#glancewatch--a-working-wristwatch) example puts
+  it all together as a working watch face.
 - **Battery, charging, power button** — the
   [power library README](https://github.com/chipguyhere/ESP32-S3-Touch-AMOLED-2.06_power/blob/main/README.md#power-characteristics-at-a-glance)
   answers the standard power questions. The short version: a power chip charges
@@ -366,3 +439,7 @@ MIT — see [LICENSE](LICENSE).
 The CO5300 initialization sequence follows the manufacturer's Arduino examples
 (Waveshare's ESP32-S3-Touch-AMOLED-2.06 repository, Apache-2.0, which use
 Arduino_GFX, BSD). `lv_conf.h` is based on LVGL's template (LVGL is MIT-licensed).
+
+Simple Shooter in GlanceWithDemos — its code, pictures and sounds — is original work
+by the same author, ported from a MicroPython version, and is under the same MIT
+license.
