@@ -1,0 +1,57 @@
+#######################################
+# Syntax Coloring Map For chipguy_ESP32-S3-Touch-AMOLED-2.06_display
+#######################################
+
+chipguy_AMOLED206_display	KEYWORD1
+chipguy_AMOLED206_touch	KEYWORD1
+lv_setup_class	KEYWORD1
+
+begin	KEYWORD2
+setRotation	KEYWORD2
+rotation	KEYWORD2
+width	KEYWORD2
+height	KEYWORD2
+setBacklight	KEYWORD2
+setBrightness	KEYWORD2
+backlight	KEYWORD2
+flushRegion	KEYWORD2
+waitFlush	KEYWORD2
+fillScreen	KEYWORD2
+setContrastEnhance	KEYWORD2
+writeCommand	KEYWORD2
+sleep	KEYWORD2
+wake	KEYWORD2
+present	KEYWORD2
+read	KEYWORD2
+touches	KEYWORD2
+chipId	KEYWORD2
+hasTouch	KEYWORD2
+touch	KEYWORD2
+
+display	KEYWORD2
+board	KEYWORD2
+lv_setup	KEYWORD2
+
+AMOLED206_NATIVE_WIDTH	LITERAL1
+AMOLED206_NATIVE_HEIGHT	LITERAL1
+AMOLED206_ROTATION_PORTRAIT	LITERAL1
+AMOLED206_ROTATION_LANDSCAPE	LITERAL1
+AMOLED206_ROTATION_PORTRAIT_FLIPPED	LITERAL1
+AMOLED206_ROTATION_LANDSCAPE_FLIPPED	LITERAL1
+AMOLED206_FLUSH_MAX_PIXELS	LITERAL1
+AMOLED206_QSPI_HZ	LITERAL1
+setTearSync	KEYWORD2
+tearSync	KEYWORD2
+measureRefreshHz	KEYWORD2
+flushFrameRegion	KEYWORD2
+beginFramebuffer	KEYWORD2
+hasFramebuffer	KEYWORD2
+drawRegion	KEYWORD2
+commit	KEYWORD2
+invalidateAll	KEYWORD2
+syncedFrames	KEYWORD2
+lateFrames	KEYWORD2
+resetTearStats	KEYWORD2
+tearFree	KEYWORD2
+LV_SETUP_TEAR_FREE	LITERAL1
+asleep	KEYWORD2
